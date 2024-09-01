@@ -13,7 +13,7 @@ class Agent:
                     self.subsitutions[value] = []
                 self.subsitutions[value].append(key)
 
-    def generate_neighbor(self, state, environment, start_time, current_cost):
+    def generate_neighbor1(self, state, environment, start_time, current_cost):
         words = state.split()
 
         for i, word in enumerate(words):
@@ -30,22 +30,39 @@ class Agent:
 
                             new_cost = environment.compute_cost(new_state)
                             if new_cost < current_cost:
-                                return new_state, new_cost
+                                state = new_state
+                                current_cost = new_cost
+                                print("Current state:", state)
                             elif time.time() - start_time > 240:
                                 return state, current_cost
 
+        return state, current_cost
+
+    def generate_neighbor2(self, state, environment, start_time, current_cost):
+        if (time.time() - start_time > 240):
+            return state, current_cost
+
+        # Beginning of the sentence
         for word in self.vocabulary:
             new_state = word + ' ' + state
             new_cost = environment.compute_cost(new_state)
             if new_cost < current_cost:
-                return new_state, new_cost
+                state = new_state
+                current_cost = new_cost
+                print("Current state:", state)
+                break
             elif time.time() - start_time > 240:
                 return state, current_cost
 
+        # End of the sentence
+        for word in self.vocabulary:
             new_state = state + ' ' + word
             new_cost = environment.compute_cost(new_state)
             if new_cost < current_cost:
-                return new_state, new_cost
+                state = new_state
+                current_cost = new_cost
+                print("Current state:", state)
+                break
             elif time.time() - start_time > 240:
                 return state, current_cost
 
@@ -59,55 +76,12 @@ class Agent:
         self.best_state = current_state
 
         start_time = time.time()
-
-        while True:
-            if (time.time() - start_time > 240):
-                break
-            current_state, current_cost = self.generate_neighbor(
-                current_state, environment, start_time, current_cost)
-            if current_state == self.best_state:
-                break
-            self.best_state = current_state
-
         print("Initial state:", environment.init_state)
-        print("Best state:", self.best_state)
-        print("Time taken in seconds:", time.time() - start_time)
 
-        # while True:
-        #     # Hill climbing to find local optimum
-        #     print("Current state:", current_state)
-        #     neighbors = self.generate_neighbors(current_state)
-        #     # print(neighbors)
-        #     neighbor_costs = [(neighbor, environment.compute_cost(
-        #         neighbor)) for neighbor in neighbors]
-        #     neighbor_costs.sort(key=lambda x: x[1])  # Sort neighbors by cost
-        #     print(neighbor_costs)
+        current_state, current_cost = self.generate_neighbor1(
+            current_state, environment, start_time, current_cost)
+        print("Neighbor 1:", current_state)
 
-        #     best_neighbor, best_cost = neighbor_costs[0]
-
-        #     if best_cost < current_cost:
-        #         current_state = best_neighbor
-        #         current_cost = best_cost
-        #         self.best_state = current_state
-        #         # print(self.best_state)
-        #     else:
-        #         # If no improvement, perform BFS from the local optimum
-        #         frontier = [current_state]
-        #         explored = set()
-
-        #         while frontier:
-        #             state = frontier.pop(0)
-        #             if state not in explored:
-        #                 explored.add(state)
-        #                 neighbors = self.generate_neighbors(state)
-        #                 for neighbor in neighbors:
-        #                     if neighbor not in explored:
-        #                         frontier.append(neighbor)
-        #                         neighbor_cost = environment.compute_cost(
-        #                             neighbor)
-        #                         if neighbor_cost < current_cost:
-        #                             self.best_state = neighbor
-        #                             # print(self.best_state)
-        #                             return  # Stop once we find a better state
-
-        #         break
+        current_state, current_cost = self.generate_neighbor2(
+            current_state, environment, start_time, current_cost)
+        print("Neighbor 2:", current_state)
