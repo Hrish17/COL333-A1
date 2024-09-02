@@ -1,4 +1,5 @@
 import time
+import json
 
 
 class Agent:
@@ -13,6 +14,9 @@ class Agent:
                     self.subsitutions[value] = []
                 self.subsitutions[value].append(key)
 
+    # def local_beam_search(self, beam, start_time, current_cos):
+    #     pass
+
     def generate_neighbor1(self, state, environment, start_time, current_cost):
         words = state.split()
         n = len(words)
@@ -20,8 +24,10 @@ class Agent:
             word = words[i]
             changed = []
             while True:
-                # neighbors = []
-                state_updated = False
+                neighbor_state = ""
+                neighbor_cost = 0
+                neighbor_pos = 0
+                neighbor_word = ""
                 for phoneme, substitutes in self.subsitutions.items():
                     phoneme_pos = [j for j in range(
                         len(word)) if word.startswith(phoneme, j) and j not in changed]
@@ -35,40 +41,38 @@ class Agent:
 
                                 new_cost = environment.compute_cost(new_state)
                                 if new_cost < current_cost:
-                                    state = new_state
-                                    current_cost = new_cost
-                                    state_updated = True
-                                    words[i] = new_word
-                                    word = new_word
-                                    print("Current state:", state)
-                                    if (len(phoneme) == len(substitute)):
-                                        changed.append(pos)
-                                    elif (len(phoneme) > len(substitute)):
-                                        m = len(changed)
-                                        for j in range(m):
-                                            if changed[j] > pos:
-                                                changed[j] += len(substitute) - \
-                                                    len(phoneme)
-                                        changed.append(pos)
-                                    else:
-                                        m = len(changed)
-                                        for j in range(m):
-                                            if changed[j] > pos:
-                                                changed[j] += len(substitute) - \
-                                                    len(phoneme)
-                                        changed.append(pos)
-                                        changed.append(pos+1)
-                                    break
+                                    if (neighbor_state == "" or new_cost < neighbor_cost):
+                                        neighbor_state = new_state
+                                        neighbor_cost = new_cost
+                                        neighbor_pos = pos
+                                        neighbor_word = new_word
                                 elif time.time() - start_time > 240:
                                     return state, current_cost
-                            if state_updated:
-                                break
-                        if state_updated:
-                            break
-                    if state_updated:
-                        break
-                if not state_updated:
+                if neighbor_state == "" or len(changed) == len(word):
                     break
+                if neighbor_state != "":
+                    if (len(word) == len(neighbor_word)):
+                        changed.append(neighbor_pos)
+                    elif (len(word) > len(neighbor_word)):
+                        m = len(changed)
+                        for j in range(m):
+                            if changed[j] > neighbor_pos:
+                                changed[j] += len(neighbor_word) - \
+                                    len(word)
+                        changed.append(neighbor_pos)
+                    else:
+                        m = len(changed)
+                        for j in range(m):
+                            if changed[j] > neighbor_pos:
+                                changed[j] += len(neighbor_word) - \
+                                    len(word)
+                        changed.append(neighbor_pos)
+                        changed.append(neighbor_pos+1)
+                    state = neighbor_state
+                    current_cost = neighbor_cost
+                    words[i] = neighbor_word
+                    word = neighbor_word
+                    print("Current state:", state)
 
         return state, current_cost
 
