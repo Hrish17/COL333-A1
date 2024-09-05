@@ -63,7 +63,7 @@ class Agent:
                     current_cost = neighbor_cost
                     words[i] = neighbor_word
                     word = neighbor_word
-                    print("Current state:", state)
+                    # print("Current state:", state)
 
         return state, current_cost
 
@@ -76,7 +76,7 @@ class Agent:
             if new_cost < current_cost:
                 temp_state = new_state
                 current_cost = new_cost
-                print("Current state:", temp_state)
+                # print("Current state:", temp_state)
 
         state = temp_state
 
@@ -86,7 +86,7 @@ class Agent:
             if new_cost < current_cost:
                 temp_state = new_state
                 current_cost = new_cost
-                print("Current state:", temp_state)
+                # print("Current state:", temp_state)
 
         return temp_state, current_cost
 
@@ -97,23 +97,23 @@ class Agent:
         current_cost = initial_cost
         self.best_state = current_state
 
-        print("Initial state:", environment.init_state)
+        # print("Initial state:", environment.init_state)
 
         current_state, current_cost = self.generate_neighbor1(
             current_state, environment, current_cost)
-        print("Neighbor 1:", current_state)
+        # print("Neighbor 1:", current_state)
 
         while (self.best_state != current_state):
             self.best_state = current_state
 
             current_state, current_cost = self.generate_neighbor1(
                 current_state, environment, current_cost)
-            print("Neighbor 2:", current_state)
+            # print("Neighbor 2:", current_state)
 
         self.best_state = current_state
 
         current_state, current_cost = self.generate_neighbor3(
             current_state, environment, current_cost)
-        print("Neighbor 3:", current_state)
+        # print("Neighbor 3:", current_state)
 
         self.best_state = current_state
