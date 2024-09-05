@@ -1,0 +1,10 @@
+Hrishabh Sangwaiya | 2022CS11625
+Ankit Kumar Meena | 2022CS11131
+
+REPORT :- Assignment 1: Correction Agent for ASR Errors in Voice-Enabled Assistants
+
+This ASR correction agent uses a phoneme-based approach to enhance the output of an Automatic Speech Recognition (ASR) system. The core algorithm follows these steps:
+
+1. Initialisation: The agent starts by setting up a phoneme table and a vocabulary list. It generates substitution tables that identify possible phoneme replacements. These substitutions are based on the provided phoneme table, which is essential for generating alternative outputs for comparison.
+
+2. Phoneme Substitution: The agent searches for phonemes within words in the current state that can be replaced with possible alternatives from the substitution table. It then checks if any of these substitutions improve the overall state. This process is iterated, and once a better state is found, the agent updates the current state to the new optimal state. This forward search through the state ensures that all possible phoneme replacements are considered, ensuring that the system continuously improves by finding the optimal phoneme replacements that minimize the error rate.

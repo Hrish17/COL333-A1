@@ -10,7 +10,7 @@ class Agent:
                     self.subsitutions[value] = []
                 self.subsitutions[value].append(key)
 
-    def generate_neighbor1(self, state, environment, current_cost):
+    def generate_neighbor(self, state, environment, current_cost):
         words = state.split()
         n = len(words)
         for i in range(n):
@@ -67,7 +67,7 @@ class Agent:
 
         return state, current_cost
 
-    def generate_neighbor3(self, state, environment, current_cost):
+    def add_word(self, state, environment, current_cost):
         temp_state = state
 
         for word in self.vocabulary:
@@ -99,20 +99,20 @@ class Agent:
 
         # print("Initial state:", environment.init_state)
 
-        current_state, current_cost = self.generate_neighbor1(
+        current_state, current_cost = self.generate_neighbor(
             current_state, environment, current_cost)
         # print("Neighbor 1:", current_state)
 
         while (self.best_state != current_state):
             self.best_state = current_state
 
-            current_state, current_cost = self.generate_neighbor1(
+            current_state, current_cost = self.generate_neighbor(
                 current_state, environment, current_cost)
             # print("Neighbor 2:", current_state)
 
         self.best_state = current_state
 
-        current_state, current_cost = self.generate_neighbor3(
+        current_state, current_cost = self.add_word(
             current_state, environment, current_cost)
         # print("Neighbor 3:", current_state)
 
